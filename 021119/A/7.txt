@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+#include "commonArray.h"
+
+void func (double arr[], int length, int offset);
+void func (double arr[], int length, int offset)
+{
+    int i, j;
+    double buffer;
+//     int count = 0;
+    
+    offset %= length;
+    
+    for (i = 1; i <= offset;i++)
+    {
+        buffer = arr[length - i];
+        for (j = length - i; j >= offset; j -= offset)
+        {
+            arr[j] = arr[j - offset];
+//             count++;
+        }
+        arr[j] = buffer;
+//         count++;
+    }
+//     printf("count = %d\n", count);
+    
+}
+
+
+int main (int argc, char * argv[])
+{
+    double * array;
+    char * name = NULL;
+    int n, res, k;
+    clock_t timer;
+    
+    if ( !( ((argc == 2) || (argc == 3)) && sscanf(argv[1], "%d", &n)) )
+    {
+        printf("Usage %s n [file]\n", argv[0]);
+        return 1;
+    }
+    
+    printf("Input k:\n");
+    if(scanf("%d", &k) != 1)
+    {
+        printf("Incorrect input\n");
+        return 2;
+    }
+    
+    array = (double *) malloc (n * sizeof(double));
+    
+    if (!array)
+    {
+        printf("Memory allocation error\n");
+        return 1;
+    }
+    
+    if (argc == 3)
+    {
+        name = argv[2];
+    }
+    
+    if (name)
+    {
+        res = read_array (name, array, n);
+        if (res < 0)
+        {
+            switch(res)
+            {
+                case -1 :
+                    printf("Can't open file %s\n", name);
+                    break;
+                case -2 :
+                    printf("Read error\n");
+                    break;
+                default:
+                    printf("Unknown error\n");
+                    break;
+            }
+            free(array);
+            return 1;
+        }
+    }
+    else
+    {
+        init_array(array, n);
+    }
+    
+    print_array(array, n);
+    timer = clock ();
+    func(array, n, k);
+    printf("Solved.\n");
+    timer = (clock() - timer)/CLOCKS_PER_SEC;
+    print_array(array, n);
+    printf("Elapsed = %.2lf\n", (double) timer);
+    free(array);
+    return 0;
+}

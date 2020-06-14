@@ -1,0 +1,169 @@
+#include <stdio.h>
+//#include <string.h>
+//#include <stdlib.h>
+void print_arr(int *arr,int len_arr);
+void init_arr(int *arr,int len_arr);
+void shift_metod1(int *arr,int len_arr,int direct);
+void shift_metod2(int *arr,int len_arr,int direct);
+void shift_metod3(int *arr,int len_arr,int direct);
+void revers_arr (int *arr, int len_arr);
+void shift_metod1(int *arr,int len_arr,int direct);
+int myabs(int);
+
+int main() 
+{
+    int i,len_arr=12;
+    int arr[13], direct=1;
+    init_arr(&arr[0],len_arr);
+    // Prints arguments
+    print_arr(&arr[0], len_arr);
+    while (1)
+    {
+        printf ("input direct (0=exit):");
+        if (scanf("%d",&direct)!=1)break;
+        if(direct==0)
+            break;
+        init_arr(&arr[0], len_arr);
+    shift_metod2(&arr[0], len_arr, direct);
+    print_arr(&arr[0], len_arr);
+    }
+    return 0;
+}
+
+int myabs(int i)
+{
+    if (i<0)
+        return 0-i;
+    else
+        return i;
+}
+void print_arr(int *arr, int len_arr)
+{
+    int i;
+   printf("\nArray :");
+   for (i=0;i<len_arr-1;i++)
+       printf("%d,",arr[i]);
+    printf("%d\n",arr[len_arr-1]);
+    
+}
+void init_arr(int *arr, int len_arr)
+{
+   for (int i=0;i<len_arr;i++)
+        arr[i]=i+1;
+    
+}
+
+//Метод "В лоб"
+void shift_metod1(int *arr,int len_arr,int direct)
+{
+    int i,j;
+    int tmp;
+    printf("\nMethod V lob:");
+    direct%=len_arr; // убираем целые циклы
+   if(direct==0) // не надо смещать
+       return;
+   if(direct<0)
+       direct=len_arr+direct; // если направление отрицательное значит положительное на немного
+    for (i=0; i<direct; i++) // смещаем на один элемент в цикле
+    {
+        
+        tmp=arr[0];
+        for (j =1;j<len_arr;j++)  
+            arr[j-1]=arr[j];
+        arr[len_arr-1]=tmp;
+    }
+}
+// Метод Непомнящего Артема
+void shift_metod2(int *arr,int len_arr,int direct)
+{
+    int i,j,cnt;
+    int tmp,tmp1;
+    printf("\nMethod Artema:");
+    direct%=len_arr; // убираем целые циклы
+   if(direct==0) // не надо смещать
+       return;
+// если смещать больше половины размерности, смещаем в противоположную сторону
+    if ( myabs(direct)*2 > len_arr) 
+           if ( direct<0)
+               direct+=len_arr;
+           else
+                direct-=len_arr;
+  
+
+    
+    
+    cnt=len_arr/direct;
+    if (cnt*direct==len_arr) // размер массива делится...
+    {
+        if (direct>0)//влево
+        for (i=0;i<direct;i++)
+        {
+            tmp=arr[i+(cnt-1)*direct];
+            for(j=cnt-1;j>0;j--)
+                arr[i+j*direct]=arr[i+(j-1)*direct];
+            arr[i]=tmp;
+        }
+        else{//вправо
+            direct=0-direct;cnt=0-cnt;
+        for (i=0;i<direct;i++)
+        {
+            tmp=arr[i];
+            for(j=1;j<cnt-1;j++)
+                arr[i+(j-1)*direct]=arr[i+j*direct];
+            arr[i+(cnt-1)*direct]=tmp;
+        }
+        }
+    }
+    else // если не делится, то перекладываем элементы влево или вправо в зависимости от знака пока не дойдем до нулевого элемента
+    {
+            tmp=arr[0];
+            i=direct;
+            if(i<0)
+                i=len_arr+i;
+            while (i!=0)
+            {
+                tmp1=arr[i];
+                 arr[i]=tmp;
+                i=i+direct;
+                if(i<0)
+                    i=len_arr+i;
+                if (i>=len_arr)
+                    i=i%len_arr;
+                tmp=tmp1;
+            }
+            arr[0]=tmp;
+    }
+}
+
+
+
+
+//Метод Карнигана
+void shift_metod3(int *arr,int len_arr,int direct)
+{
+   printf("\nMethod 3:");
+   direct%=len_arr; // убираем целые циклы
+   if(direct==0) // не надо смещать
+       return;
+   if(direct<0)
+       direct=len_arr+direct; // если направление отрицательное значит положительное на немного
+   revers_arr(&arr[0], direct);
+   revers_arr(&arr[direct], len_arr-direct);
+   revers_arr(&arr[0], len_arr);
+ 
+    
+}
+
+void revers_arr(int *arr, int len_arr)
+{
+    int i;
+    int tmp;
+    for(i=0;i<len_arr/2;i++)
+    {
+        tmp=arr[i];
+        arr[i]=arr[len_arr-i-1];
+        arr[len_arr-i-1]=tmp;
+    }
+
+}
+// Окончание метод Карнигана
