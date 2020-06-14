@@ -1,2 +1,2 @@
 # msu-unsorted-raw
-random iz moyei fleshki
+1 semestr: random iz moyei fleshki
